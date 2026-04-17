@@ -1,136 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MLBB Lucky Spin</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLBB Lucky Spin</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --deep-forest: #1a3c34;
+      --cream: #fbfbf8;
+      --soft-white: #ffffff;
+      --gold-accent: #c4a77d;
+    }
 
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-<style>
-:root {
-  --deep-forest: #1a3c34;
-  --cream: #fbfbf8;
-  --soft-white: #ffffff;
-  --gold-accent: #c4a77d;
-}
+    body {
+      margin: 0;
+      background-color: var(--cream);
+      background-image: linear-gradient(rgba(251, 251, 248, 0.95), rgba(251, 251, 248, 0.95)), 
+                        url('1000117952.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #333;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      overflow: hidden; /* FIXED UI SHAKE */
+      padding: 0 20px 40px;
+    }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+    h1 {
+      margin-top: 50px;
+      margin-bottom: 10px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 36px;
+      color: var(--deep-forest);
+      letter-spacing: -1px;
+    }
 
-body {
-  background-color: var(--cream);
-  background-image: linear-gradient(rgba(251, 251, 248, 0.95), rgba(251, 251, 248, 0.95)),
-                    url('1000117952.jpg');
-  background-size: cover;
-  background-position: center;
-  background-attachment: fixed;
-  text-align: center;
-  font-family: 'Montserrat', sans-serif;
-  padding: 0 20px 40px;
-  overflow-x: hidden;
-}
+    p {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 40px;
+      max-width: 450px;
+      margin-left: auto;
+      margin-right: auto;
+    }
 
-h1 {
-  margin-top: 40px;
-  font-family: 'Playfair Display', serif;
-  font-size: 34px;
-  color: var(--deep-forest);
-}
+    .wheel-main-container {
+      position: relative;
+      width: 90vw;
+      max-width: 380px;
+      margin: 0 auto;
+    }
 
-p {
-  margin-bottom: 30px;
-  color: #555;
-}
+    .pointer {
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 30px solid var(--deep-forest);
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
 
-.wheel-main-container {
-  position: relative;
-  width: 90vw;
-  max-width: 380px;
-  margin: auto;
-}
+    canvas {
+      width: 100%;
+      border-radius: 50%;
+      border: 8px solid var(--soft-white);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
 
-.pointer {
-  width: 0;
-  height: 0;
-  border-left: 15px solid transparent;
-  border-right: 15px solid transparent;
-  border-top: 30px solid var(--deep-forest);
-  position: absolute;
-  top: -10px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 10;
-}
+    button {
+      margin-top: 30px;
+      padding: 18px 50px;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: none;
+      background-color: var(--deep-forest);
+      color: var(--soft-white);
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+    }
 
-canvas {
-  width: 100%;
-  border-radius: 50%;
-  border: 8px solid white;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-}
+    #result {
+      margin-top: 30px;
+      min-height: 80px;
+    }
 
-button {
-  margin-top: 25px;
-  padding: 16px 45px;
-  border: none;
-  background: var(--deep-forest);
-  color: white;
-  border-radius: 40px;
-  cursor: pointer;
-  font-weight: 600;
-}
+    .winner-announcement {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--deep-forest);
+    }
 
-button:disabled {
-  background: #ccc;
-}
+    .winner-prize {
+      color: var(--gold-accent);
+      font-weight: 600;
+      font-size: 32px;
+    }
 
-#result {
-  margin-top: 25px;
-  height: 100px;
-}
-
-.winner-announcement {
-  font-size: 22px;
-  color: var(--deep-forest);
-}
-
-.winner-prize {
-  font-size: 30px;
-  color: var(--gold-accent);
-}
-
-/* FIXED CONFETTI */
-.confetti {
-  position: fixed;
-  width: 10px;
-  height: 10px;
-  opacity: 0.8;
-  pointer-events: none;
-}
-</style>
+    .confetti {
+      position: fixed; /* FIXED */
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>LUCKY SPIN EVENT</h1>
-<p>Spin the wheel and win exclusive rewards!</p>
+<h1>🎯 MLBB LUCKY SPIN</h1>
+<p>Spin the wheel and test your luck. Unlock rare rewards and epic prizes!</p>
 
 <div class="wheel-main-container">
   <div class="pointer"></div>
   <canvas id="wheel" width="400" height="400"></canvas>
 </div>
 
-<button id="spinBtn">SPIN NOW</button>
+<button id="spinBtn">Spin Now</button>
 
 <div id="result"></div>
 
-<!-- SOUND -->
 <audio id="spinSound" loop>
   <source src="spin_loop.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="winSound">
-  <source src="win_fanfare.aac" type="audio/aac">
+  <source src="win_fanfare.mp3" type="audio/mpeg">
 </audio>
 
 <script>
@@ -141,10 +150,6 @@ const resultDiv = document.getElementById("result");
 const spinSound = document.getElementById("spinSound");
 const winSound = document.getElementById("winSound");
 
-const size = 400;
-const center = size/2;
-const radius = size/2;
-
 const sections = [
   "Try Again",
   "50 Diamonds",
@@ -152,86 +157,86 @@ const sections = [
   "100 Diamonds",
   "Elite Skin",
   "Epic Skin",
-  "Recall Effect",
+  "Special Reward",
   "JACKPOT"
 ];
 
-const colors = ["#ffd6d6","#d6f5d6","#d6e0ff","#fff0b3","#e6ccff","#ffcccc","#ccf2ff","#ffe6cc"];
+const colors = ["#f4d3d3","#d1e7dd","#cfe2f3","#fff3cd","#e2e3e5","#f8d7da","#e0fbfc","#ffefdb"];
 
 const total = sections.length;
 const arc = 2 * Math.PI / total;
 
-function drawWheel(){
-  for(let i=0;i<total;i++){
+function drawWheel() {
+  for (let i = 0; i < total; i++) {
     ctx.beginPath();
     ctx.fillStyle = colors[i];
-    ctx.moveTo(center,center);
-    ctx.arc(center,center,radius,i*arc,(i+1)*arc);
+    ctx.moveTo(200,200);
+    ctx.arc(200,200,200,i*arc,(i+1)*arc);
     ctx.fill();
 
     ctx.save();
-    ctx.translate(center,center);
+    ctx.translate(200,200);
     ctx.rotate(i*arc + arc/2);
     ctx.fillStyle="#333";
-    ctx.fillText(sections[i],radius*0.6,5);
+    ctx.fillText(sections[i],120,10);
     ctx.restore();
   }
 }
+
 drawWheel();
 
 let spinning=false;
 
-spinBtn.onclick = () => {
-  if(spinning) return;
-  spinning=true;
+spinBtn.onclick = function () {
+  if (spinning) return;
+  spinning = true;
 
-  spinBtn.disabled=true;
-  resultDiv.innerHTML="";
+  resultDiv.innerHTML = "";
+  spinBtn.innerHTML = "Spinning...";
+  spinBtn.disabled = true;
 
   spinSound.play();
 
-  const winIndex = Math.floor(Math.random()*total);
+  const winningIndex = Math.floor(Math.random() * total);
+  const rotateDeg = 3600 + (360 - (winningIndex * 360 / total));
 
-  const segment = 360/total;
-  const finalDeg = 3600 + (270 - (winIndex*segment + segment/2));
+  canvas.style.transition = "5s";
+  canvas.style.transform = `rotate(${rotateDeg}deg)`;
 
-  canvas.style.transition="transform 5s ease-out";
-  canvas.style.transform=`rotate(${finalDeg}deg)`;
-
-  setTimeout(()=>{
+  setTimeout(() => {
     spinSound.pause();
-    spinSound.currentTime=0;
+    spinSound.currentTime = 0;
 
     winSound.play();
 
     resultDiv.innerHTML = `
-      <div class="winner-announcement">You Won:</div>
-      <div class="winner-prize">${sections[winIndex]}</div>
+      <div class="winner-announcement">🎉 You Won:</div>
+      <div class="winner-prize">${sections[winningIndex]}</div>
+      <div style="font-size:14px;">Claim your reward now!</div>
     `;
 
-    confetti();
+    createConfetti();
 
-    spinBtn.disabled=false;
-    spinning=false;
+    spinBtn.disabled = false;
+    spinBtn.innerHTML = "Spin Again";
+    spinning = false;
 
-  },5000);
+  }, 5000);
 };
 
-function confetti(){
+function createConfetti(){
   for(let i=0;i<80;i++){
-    const c=document.createElement("div");
+    let c=document.createElement("div");
     c.className="confetti";
-    c.style.background=colors[Math.floor(Math.random()*colors.length)];
-    c.style.left=Math.random()*100+"vw";
-    c.style.top="-10px";
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.left = Math.random()*100+"vw";
+    c.style.top = "-10px";
     document.body.appendChild(c);
 
     c.animate([
       {transform:"translateY(0)"},
       {transform:"translateY(100vh)"}
-    ],{
-      duration:2000+Math.random()*2000
-    });
+    ],{duration:3000});
 
     setTimeout(()=>c.remove(),3000);
   }
