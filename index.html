@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Lucky Spin MLBB</title>
+  <style>
+    body {
+      text-align: center;
+      font-family: Arial;
+      background: #111;
+      color: white;
+    }
+    button {
+      padding: 15px 30px;
+      font-size: 20px;
+      margin-top: 20px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+<h1>🎡 Lucky Spin MLBB</h1>
+<p>Spin and try your luck!</p>
+
+<button onclick="spin()">SPIN</button>
+
+<h2 id="result"></h2>
+
+<script>
+function spin() {
+  let rand = Math.random();
+
+  if (rand < 0.7) {
+    document.getElementById("result").innerText = "❌ Try Again";
+  } 
+  else if (rand < 0.95) {
+    document.getElementById("result").innerText = "⭐ Small Reward! Screenshot & DM";
+  } 
+  else {
+    document.getElementById("result").innerText = "💎 JACKPOT! Screenshot & DM NOW!";
+  }
+}
+</script>
+
+</body>
+</html>
