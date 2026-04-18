@@ -1,75 +1,173 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MLBB Spin Pro</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MLBB Lucky Spin</title>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --deep-forest: #1a3c34;
+      --cream: #fbfbf8;
+      --soft-white: #ffffff;
+      --gold-accent: #c4a77d;
+    }
 
-<style>
-body {
-  background: radial-gradient(circle, #0f172a, #020617);
-  color: white;
-  text-align: center;
-  font-family: Arial;
-}
+    * { margin: 0; padding: 0; box-sizing: border-box; }
 
-canvas {
-  margin-top: 30px;
-  border-radius: 50%;
-}
+    body {
+      margin: 0;
+      background-color: var(--cream);
+      background-image: linear-gradient(rgba(251, 251, 248, 0.95), rgba(251, 251, 248, 0.95)), 
+                        url('1000117952.jpg'); 
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: #333;
+      text-align: center;
+      font-family: 'Montserrat', sans-serif;
+      overflow: hidden; /* FIXED UI SHAKE */
+      padding: 0 20px 40px;
+    }
 
-button {
-  margin-top: 20px;
-  padding: 15px 40px;
-  font-size: 18px;
-  border: none;
-  background: gold;
-  color: black;
-  cursor: pointer;
-  border-radius: 10px;
-}
+    h1 {
+      margin-top: 50px;
+      margin-bottom: 10px;
+      font-family: 'Playfair Display', serif;
+      font-weight: 600;
+      font-size: 36px;
+      color: var(--deep-forest);
+      letter-spacing: -1px;
+    }
 
-#winner {
-  font-size: 28px;
-  margin-top: 20px;
-}
-</style>
+    p {
+      font-size: 16px;
+      color: #666;
+      margin-bottom: 40px;
+      max-width: 450px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .wheel-main-container {
+      position: relative;
+      width: 90vw;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    .pointer {
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-top: 30px solid var(--deep-forest);
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 10;
+    }
+
+    canvas {
+      width: 100%;
+      border-radius: 50%;
+      border: 8px solid var(--soft-white);
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08);
+    }
+
+    button {
+      margin-top: 30px;
+      padding: 18px 50px;
+      font-size: 14px;
+      font-family: 'Montserrat', sans-serif;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      border: none;
+      background-color: var(--deep-forest);
+      color: var(--soft-white);
+      border-radius: 50px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    #result {
+      margin-top: 30px;
+      min-height: 80px;
+    }
+
+    .winner-announcement {
+      font-family: 'Playfair Display', serif;
+      font-size: 24px;
+      color: var(--deep-forest);
+    }
+
+    .winner-prize {
+      color: var(--gold-accent);
+      font-weight: 600;
+      font-size: 32px;
+    }
+
+    .confetti {
+      position: fixed; /* FIXED */
+      width: 10px;
+      height: 10px;
+      pointer-events: none;
+      z-index: 100;
+    }
+  </style>
 </head>
 
 <body>
 
-<h1>🔥 MLBB LUCKY SPIN 🔥</h1>
+<h1>🎯 MLBB LUCKY SPIN</h1>
+<p>Spin the wheel and test your luck. Unlock rare rewards and epic prizes!</p>
 
-<canvas id="wheel" width="400" height="400"></canvas>
-<br>
-<button id="spinBtn">SPIN</button>
+<div class="wheel-main-container">
+  <div class="pointer"></div>
+  <canvas id="wheel" width="400" height="400"></canvas>
+</div>
 
-<div id="winner"></div>
+<button id="spinBtn">Spin Now</button>
 
-<!-- SOUND -->
+<div id="result"></div>
+
 <audio id="spinSound" loop>
   <source src="spin_loop.mp3" type="audio/mpeg">
 </audio>
 
 <audio id="winSound">
-  <source src="win_fanfare.aac" type="audio/aac">
+  <source src="win_fanfare.mp3" type="audio/mpeg">
 </audio>
 
 <script>
 const canvas = document.getElementById("wheel");
 const ctx = canvas.getContext("2d");
-
 const spinBtn = document.getElementById("spinBtn");
+const resultDiv = document.getElementById("result");
 const spinSound = document.getElementById("spinSound");
 const winSound = document.getElementById("winSound");
 
-const sections = ["Try Again","50💎","100💎","Epic","Legend","Jackpot"];
-const colors = ["red","blue","green","yellow","purple","orange"];
+const sections = [
+  "Try Again",
+  "50 Diamonds",
+  "Basic Skin",
+  "100 Diamonds",
+  "Elite Skin",
+  "Epic Skin",
+  "Special Reward",
+  "JACKPOT"
+];
 
-const arc = 2 * Math.PI / sections.length;
+const colors = ["#f4d3d3","#d1e7dd","#cfe2f3","#fff3cd","#e2e3e5","#f8d7da","#e0fbfc","#ffefdb"];
 
-function drawWheel(){
-  for(let i=0;i<sections.length;i++){
+const total = sections.length;
+const arc = 2 * Math.PI / total;
+
+function drawWheel() {
+  for (let i = 0; i < total; i++) {
     ctx.beginPath();
     ctx.fillStyle = colors[i];
     ctx.moveTo(200,200);
@@ -79,7 +177,7 @@ function drawWheel(){
     ctx.save();
     ctx.translate(200,200);
     ctx.rotate(i*arc + arc/2);
-    ctx.fillStyle="white";
+    ctx.fillStyle="#333";
     ctx.fillText(sections[i],120,10);
     ctx.restore();
   }
@@ -89,46 +187,60 @@ drawWheel();
 
 let spinning=false;
 
-spinBtn.onclick = () => {
-  if(spinning) return;
-  spinning=true;
+spinBtn.onclick = function () {
+  if (spinning) return;
+  spinning = true;
 
-  // START SOUND
-  spinSound.currentTime = 0;
-  spinSound.volume = 1;
+  resultDiv.innerHTML = "";
+  spinBtn.innerHTML = "Spinning...";
+  spinBtn.disabled = true;
+
   spinSound.play();
 
-  let winIndex = Math.floor(Math.random()*sections.length);
-
-  let rotateDeg = 3600 + (360 - (winIndex * 360 / sections.length));
+  const winningIndex = Math.floor(Math.random() * total);
+  const rotateDeg = 3600 + (360 - (winningIndex * 360 / total));
 
   canvas.style.transition = "5s";
   canvas.style.transform = `rotate(${rotateDeg}deg)`;
 
-  setTimeout(()=>{
+  setTimeout(() => {
+    spinSound.pause();
+    spinSound.currentTime = 0;
 
-    // STOP SOUND SMOOTH
-    let fade = setInterval(()=>{
-      if(spinSound.volume > 0.05){
-        spinSound.volume -= 0.05;
-      } else {
-        spinSound.pause();
-        spinSound.currentTime = 0;
-        spinSound.volume = 1;
-        clearInterval(fade);
-      }
-    },100);
-
-    // WIN SOUND
     winSound.play();
 
-    document.getElementById("winner").innerHTML =
-      "🎉 YOU WON: " + sections[winIndex];
+    resultDiv.innerHTML = `
+      <div class="winner-announcement">🎉 You Won:</div>
+      <div class="winner-prize">${sections[winningIndex]}</div>
+      <div style="font-size:14px;">Claim your reward now!</div>
+    `;
 
-    spinning=false;
+    createConfetti();
 
-  },5000);
+    spinBtn.disabled = false;
+    spinBtn.innerHTML = "Spin Again";
+    spinning = false;
+
+  }, 5000);
 };
+
+function createConfetti(){
+  for(let i=0;i<80;i++){
+    let c=document.createElement("div");
+    c.className="confetti";
+    c.style.background = colors[Math.floor(Math.random()*colors.length)];
+    c.style.left = Math.random()*100+"vw";
+    c.style.top = "-10px";
+    document.body.appendChild(c);
+
+    c.animate([
+      {transform:"translateY(0)"},
+      {transform:"translateY(100vh)"}
+    ],{duration:3000});
+
+    setTimeout(()=>c.remove(),3000);
+  }
+}
 </script>
 
 </body>
